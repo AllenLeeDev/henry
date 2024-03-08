@@ -1,6 +1,7 @@
 import React from "react"
 import type { ISchedule } from "../../state/providers/providersSlice"
 import { reserveTimeSlot } from "../../state/providers/providersSlice"
+import { addHours, addMinutes, format } from "date-fns"
 import { useAppDispatch } from "../../state/hooks"
 import {
   Button,
@@ -23,6 +24,7 @@ const Calendar = ({ schedule, providerId }) => {
     React.useState<Array<string>>()
   const [showPast24Hours, setShowPast24Hours] = React.useState(false)
   const [selectedDate, setSelectedDate] = React.useState("")
+  const [showDialog, setShowDialog] = React.useState(false)
 
   const sortSchedule = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
@@ -34,6 +36,7 @@ const Calendar = ({ schedule, providerId }) => {
     findAvailableAppointments(filteredSchedule)
   }
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
     setSelectedDate(e.target.value)
     sortSchedule(e)
   }
@@ -46,11 +49,12 @@ const Calendar = ({ schedule, providerId }) => {
   }
 
   const generateTimeSlots = (startTime: string, endTime: string, date) => {
-    let now = new Date(date).getTime()
+    let now = new Date()
     let tomorrow = new Date(date).getTime() + 1
 
-    //remove any slots that are within 24 hours
+    const isWithin24Hours = now.getTime() < tomorrow
 
+    //remove any slots that are within 24 hours
     if (!startTime || !endTime) return []
     const slots = []
 
@@ -66,7 +70,15 @@ const Calendar = ({ schedule, providerId }) => {
       currentTime += 15 // Increment by 15 minutes
     }
 
-    return slots
+    return slots.filter(slot => {
+      if (!isWithin24Hours) {
+        return (
+          new Date(`${date}T${slot}`).getTime() > now.getTime() &&
+          new Date(`${date}T${slot}`).getTime() < tomorrow
+        )
+      }
+      return true
+    })
   }
 
   // Function to find available appointments
@@ -134,10 +146,12 @@ const Calendar = ({ schedule, providerId }) => {
       })
     )
 
-    setSelectedTimeSlot(null)
+    setShowDialog(false)
+    // setSelectedTimeSlot(null)
   }
 
   const handleReserveTimeSlot = (time: string) => {
+    setShowDialog(true)
     setSelectedTimeSlot(time)
   }
 
@@ -151,46 +165,43 @@ const Calendar = ({ schedule, providerId }) => {
       }}
     >
       <Typography variant="h6" gutterBottom sx={{ marginBottom: "20px" }}>
+        You have a confirmed appointment {selectedDate} at {selectedTimeSlot}
+      </Typography>
+      <Typography variant="h6" gutterBottom sx={{ marginBottom: "20px" }}>
         Upcoming meetings
       </Typography>
-      <Container
-        sx={{
-          overflowY: "auto",
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          flexWrap: "wrap",
-          height: "100%"
-        }}
+      <TextField
+        type="date"
+        variant="outlined"
+        value={selectedDate}
+        onChange={handleDateChange}
+        sx={{ marginBottom: "20px" }}
+      />
+      <Grid
+        container
+        spacing={2}
+        width={"50%"}
+        justifyContent="center"
+        alignItems="center"
+        display="flex"
       >
-        <TextField
-          type="date"
-          variant="outlined"
-          value={selectedDate}
-          onChange={handleDateChange}
-          sx={{ marginBottom: "20px" }}
-        />
-        <Grid container spacing={2}>
-          {availableAppointments &&
-            availableAppointments.map((appointment, index) => (
-              <Grid item xs={4} key={index}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleReserveTimeSlot(appointment)}
-                  fullWidth
-                  sx={{ marginBottom: "10px" }}
-                >
-                  {appointment}
-                </Button>
-              </Grid>
-            ))}
-        </Grid>
-      </Container>
-      <Dialog
-        open={selectedTimeSlot !== null}
-        onClose={() => setSelectedTimeSlot(null)}
-      >
+        {availableAppointments &&
+          availableAppointments.map((appointment, index) => (
+            <Grid item xs={4} key={index}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => handleReserveTimeSlot(appointment)}
+                fullWidth
+                sx={{ marginBottom: "10px", maxWidth: 150 }}
+              >
+                {appointment}
+              </Button>
+            </Grid>
+          ))}
+      </Grid>
+
+      <Dialog open={showDialog} onClose={() => setSelectedTimeSlot(null)}>
         <DialogTitle>Confirm Reservation</DialogTitle>
         <DialogContent>
           <Typography>
