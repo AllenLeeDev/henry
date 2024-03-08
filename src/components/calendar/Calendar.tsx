@@ -147,7 +147,6 @@ const Calendar = ({ schedule, providerId }) => {
     )
 
     setShowDialog(false)
-    // setSelectedTimeSlot(null)
   }
 
   const handleReserveTimeSlot = (time: string) => {
