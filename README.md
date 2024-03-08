@@ -1,27 +1,35 @@
-# vite-template-redux
+## Project Folder Structure
+<pre>
+..
+├── henry          # This repo
+    ├── node_modules        # Dependencies, do not commit
+    ├── public          
+    ├── src 
+    │   ├── assets            # Contains a few henry assets
+    │   ├── components      # All React components of the frontend, add new components (pages or other rendered objects) here
+    │   ├── pages    # Pages handled by react-router-dom
+    │   ├── state    # Redux toolkit state and reducers
+    │   └── router   # Contains all routers
+    └── ...
+</pre>
 
-Uses [Vite](https://vitejs.dev/), [Vitest](https://vitest.dev/), and [React Testing Library](https://github.com/testing-library/react-testing-library) to create a modern [React](https://react.dev/) app compatible with [Create React App](https://create-react-app.dev/)
+## Available Scripts
 
-```sh
-npx degit reduxjs/redux-templates/packages/vite-template-redux my-app
-```
+In the project directory, you can run:
 
-## Goals
+### `yarn dev`
 
-- Easy migration from Create React App or Vite
-- As beginner friendly as Create React App
-- Optimized performance compared to Create React App
-- Customizable without ejecting
+Runs the app in the development mode.\
+Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
 
-## Scripts
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-- `dev`/`start` - start dev server and open browser
-- `build` - build for production
-- `preview` - locally preview production build
-- `test` - launch test runner
+## Known Shortcomings
 
-## Inspiration
+Due to time restraints was not able to 100% finish the tasks the only one being `Reservations must be made at least 24 hours in advance`.
 
-- [Create React App](https://github.com/facebook/create-react-app/tree/main/packages/cra-template)
-- [Vite](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react)
-- [Vitest](https://github.com/vitest-dev/vitest/tree/main/examples/react-testing-lib)
+## With more time what I would add
+- I would add more validation to make it so you cannot set an appointment in the past.
+- Make it so you could do all CRUD operations on the schedule as the provider.
+- Improve the UI
