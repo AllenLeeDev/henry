@@ -27,7 +27,7 @@ You may also see any lint errors in the console.
 
 ## Known Shortcomings
 
-Due to time restraints was not able to 100% finish the tasks the only one being `Reservations must be made at leasxt 24 hours in advance`.
+Due to time restraints was not able to 100% finish the tasks the only one being `Reservations must be made at least 24 hours in advance`.
 
 ## With more time what I would add
 - I would add more validation to make it so you cannot set an appointment in the past.
