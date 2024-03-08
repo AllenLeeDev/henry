@@ -134,12 +134,12 @@ const ProvidersPage = () => {
                         boxShadow:
                           providerId === provider.providerId
                             ? "0px 0px 5px 5px rgba(0, 131, 108, 0.5)"
-                            : "none", // Added a default value for boxShadow
+                            : "none",
                         "&:hover": {
                           boxShadow:
                             providerId !== provider.providerId
                               ? "0px 0px 5px 5px rgba(0, 131, 108, 0.5)"
-                              : "none" // Added a default value for boxShadow
+                              : "none"
                         }
                       }}
                       onClick={() => {
