@@ -1,7 +1,5 @@
 import React from "react"
-import type { ISchedule } from "../../state/providers/providersSlice"
 import { reserveTimeSlot } from "../../state/providers/providersSlice"
-import { addHours, addMinutes, format } from "date-fns"
 import { useAppDispatch } from "../../state/hooks"
 import {
   Button,
@@ -9,7 +7,6 @@ import {
   Typography,
   Box,
   TextField,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -18,8 +15,10 @@ import {
 
 const Calendar = ({ schedule, providerId }) => {
   const dispatch = useAppDispatch()
-  const [filteredSchedule, setFilteredSchedule] = React.useState<ISchedule[]>()
-  const [selectedTimeSlot, setSelectedTimeSlot] = React.useState(null)
+  const [selectedTimeSlot, setSelectedTimeSlot] = React.useState({
+    time: "",
+    verified: false
+  })
   const [availableAppointments, setAvailableAppointments] =
     React.useState<Array<string>>()
   const [showPast24Hours, setShowPast24Hours] = React.useState(false)
@@ -48,7 +47,11 @@ const Calendar = ({ schedule, providerId }) => {
     return hours * 60 + minutes
   }
 
-  const generateTimeSlots = (startTime: string, endTime: string, date) => {
+  const generateTimeSlots = (
+    startTime: string,
+    endTime: string,
+    date: string | number | Date
+  ) => {
     let now = new Date()
     let tomorrow = new Date(date).getTime() + 1
 
@@ -87,10 +90,6 @@ const Calendar = ({ schedule, providerId }) => {
       setAvailableAppointments([])
       return
     }
-
-    const currentSchedule = filteredSchedule.indexOf(
-      filteredSchedule.find(s => s.providerId === providerId)
-    )
 
     const { startTime, endTime, appointments, date } = filteredSchedule[0]
 
@@ -136,8 +135,6 @@ const Calendar = ({ schedule, providerId }) => {
 
     findAvailableAppointments(updatedSchedule)
 
-    setFilteredSchedule(updatedSchedule)
-
     // Dispatch the updated schedule for the provider
     dispatch(
       reserveTimeSlot({
@@ -147,12 +144,11 @@ const Calendar = ({ schedule, providerId }) => {
     )
 
     setShowDialog(false)
-    // setSelectedTimeSlot(null)
   }
 
   const handleReserveTimeSlot = (time: string) => {
     setShowDialog(true)
-    setSelectedTimeSlot(time)
+    setSelectedTimeSlot({ time, verified: false })
   }
 
   return (
@@ -164,9 +160,12 @@ const Calendar = ({ schedule, providerId }) => {
         flexDirection: "column"
       }}
     >
-      <Typography variant="h6" gutterBottom sx={{ marginBottom: "20px" }}>
-        You have a confirmed appointment {selectedDate} at {selectedTimeSlot}
-      </Typography>
+      {selectedDate && selectedTimeSlot.verified && (
+        <Typography variant="h6" gutterBottom sx={{ marginBottom: "20px" }}>
+          You have a confirmed appointment {selectedDate} at{" "}
+          {selectedTimeSlot.time}
+        </Typography>
+      )}
       <Typography variant="h6" gutterBottom sx={{ marginBottom: "20px" }}>
         Upcoming meetings
       </Typography>
@@ -201,20 +200,33 @@ const Calendar = ({ schedule, providerId }) => {
           ))}
       </Grid>
 
-      <Dialog open={showDialog} onClose={() => setSelectedTimeSlot(null)}>
+      <Dialog
+        open={showDialog}
+        onClose={() =>
+          setSelectedTimeSlot({ ...selectedTimeSlot, verified: false })
+        }
+      >
         <DialogTitle>Confirm Reservation</DialogTitle>
         <DialogContent>
           <Typography>
             Are you sure you want to reserve the time slot:{" "}
-            <strong>{selectedTimeSlot}</strong>?
+            <strong>{selectedTimeSlot.time}</strong>?
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setSelectedTimeSlot(null)} color="primary">
+          <Button
+            onClick={() =>
+              setSelectedTimeSlot({ ...selectedTimeSlot, verified: false })
+            }
+            color="primary"
+          >
             Cancel
           </Button>
           <Button
-            onClick={() => handleReservation(selectedTimeSlot)}
+            onClick={() => {
+              handleReservation(selectedTimeSlot.time)
+              setSelectedTimeSlot({ ...selectedTimeSlot, verified: true })
+            }}
             color="primary"
             autoFocus
           >
