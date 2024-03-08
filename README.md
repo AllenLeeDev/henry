@@ -33,3 +33,4 @@ Due to time restraints was not able to 100% finish the tasks the only one being 
 - I would add more validation to make it so you cannot set an appointment in the past.
 - Make it so you could do all CRUD operations on the schedule as the provider.
 - Improve the UI
+- I learned the hard way, that I should have used a date library. 
