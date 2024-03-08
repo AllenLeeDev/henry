@@ -25,12 +25,7 @@ Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-## Known Shortcomings
-
-Due to time restraints was not able to 100% finish the tasks the only one being `Reservations must be made at least 24 hours in advance`.
-
 ## With more time what I would add
 - I would add more validation to make it so you cannot set an appointment in the past.
 - Make it so you could do all CRUD operations on the schedule as the provider.
 - Improve the UI
-- I learned the hard way, that I should have used a date library. 
